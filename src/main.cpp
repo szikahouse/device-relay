@@ -1,9 +1,11 @@
-#include <Arduino.h>
+#include <ESProtocol.hpp>
+
+ESProtocol protocol;
 
 void setup() {
-  // put your setup code here, to run once:
+  protocol.setup();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  protocol.loop();
 }
