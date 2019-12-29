@@ -1,6 +1,7 @@
 #include <ESProtocol.hpp>
 
 #define RELAY_PIN 0
+#define MAX_STATE_NAME_SIZE 8
 
 // Init ESProtocol
 ESProtocol protocol;
@@ -42,6 +43,17 @@ void getStateName(RelayState state, char* name) {
   }
 }
 
+/**
+ * Build result with current relay state.
+ * 
+ * @param result the JSON object to manipulate.
+ */
+void buildResultWithCurrentRelayState(JsonObject& result) {
+    char name[MAX_STATE_NAME_SIZE];
+    getStateName(currentRelayState, name);
+    result["r"] = name;
+}
+
 void setup() {
   // Initialize the relay pin and set to opened by default
   pinMode(RELAY_PIN, OUTPUT);
@@ -53,18 +65,18 @@ void setup() {
   // Register RPC handler for "open" command
   protocol.addRPCHandler("open", [](JsonObject& params, JsonObject& result) {
     setRelayState(RELAY_OPEN);
+    buildResultWithCurrentRelayState(result);
   });
 
   // Register RPC handler for "close" command
   protocol.addRPCHandler("close", [](JsonObject& params, JsonObject& result) {
     setRelayState(RELAY_CLOSE);
+    buildResultWithCurrentRelayState(result);
   });
 
   // Register RPC handler for "getState" command
   protocol.addRPCHandler("getState", [](JsonObject& params, JsonObject& result) {
-    char name[8];
-    getStateName(currentRelayState, name);
-    result["r"] = name;
+    buildResultWithCurrentRelayState(result);
   });
 }
 
